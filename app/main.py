@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers.users import user_router
+from app.routers import router
 from app.models.user import Base
 from app.db.session import engine
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 app = FastAPI(title = "SmartLink", version="1.0")
 
 
-app.include_router(user_router)
+app.include_router(router)
 
 try:
     Base.metadata.create_all(engine)

@@ -1,4 +1,3 @@
-from sqlalchemy import create_engine
 from sqlalchemy.orm import session
 from fastapi import HTTPException, status
 from app.schemas.user import UserCreate
