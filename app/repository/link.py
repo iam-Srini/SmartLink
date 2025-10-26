@@ -12,7 +12,6 @@ class LinkRepository:
         self.db = db
     
     def create_link(self, data:LinkCreate, user_data:User):
-
         short_link = generate_short_code_from_uuid(data.original_url)
         while self.db.query(Link).filter(Link.short_url == short_link).first():
             short_link = generate_short_code_from_uuid(data.original_url)

@@ -52,7 +52,7 @@ class UserRepository:
         self.db.refresh(user)
         return {"message": "User Verified Successfully."}
     
-    def login_user_repo(self, email: str, password: str):
+    def login_user_repo(self, email: str, password: str)-> dict:
         user = self.db.query(User).filter(User.email == email).first()
         if not user :
             raise HTTPException(

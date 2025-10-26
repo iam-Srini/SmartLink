@@ -29,7 +29,7 @@ def redirect_link(
     original_url = link_repo.redirect_link(short_url=short_url)
     return RedirectResponse(url=original_url, status_code= status.HTTP_307_TEMPORARY_REDIRECT)
 
-@link_router.get("/all", response_model= list[LinkRead])
+@link_router.get("/get/all", response_model= list[LinkRead])
 def get_user_links(
     session : Session = Depends(get_db),
     user_data: User = Depends(get_current_user)

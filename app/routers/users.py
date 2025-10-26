@@ -32,7 +32,9 @@ def verify_user(email: str, otp: str, Session: session = Depends(get_db)):
 def user_login(request: OAuth2PasswordRequestForm = Depends(), Session = Depends(get_db)):
     print(f"inside router")
     user_repo = UserRepository(db = Session)
-    return user_repo.login_user_repo(email=request.username,password=request.password)
+    access_token =  user_repo.login_user_repo(email=request.username,password=request.password)
+    print(f"access_token:{access_token}")
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 

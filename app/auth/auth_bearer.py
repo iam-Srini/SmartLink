@@ -8,7 +8,7 @@ from app.repository.users import UserRepository
 
 auth_bearer = OAuth2PasswordBearer(tokenUrl="/users/login")
 
-def get_current_user(token : str = Depends(auth_bearer), db:Session = Depends(get_db))->User:
+def get_current_user(token:dict = Depends(auth_bearer), db:Session = Depends(get_db))->User:
     try:
         print(f"token : {token}")
         token_data = verify_access_token(token)

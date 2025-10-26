@@ -10,11 +10,11 @@ def create_access_token(data: dict) -> dict:
     encode_data.update({"exp":expires, "scope":"access_token"})
     encoded_jwt = jwt.encode(payload=encode_data,algorithm=settings.algorithm,key=settings.secret_key)
     print(f"Encoded data {encoded_jwt}")
-    return {"encoded_token": encoded_jwt, "token_type": "bearer"}
+    return encoded_jwt
 
-def verify_access_token(token: dict):
+def verify_access_token(token: str):
     try:
-        payload = jwt.decode(token["encoded_token"],key=settings.secret_key,algorithms=settings.algorithm)
+        payload = jwt.decode(token,key=settings.secret_key,algorithms=settings.algorithm)
         user_id = payload.get("sub")
         scope = payload.get("scope")
 
