@@ -2,7 +2,7 @@ from sqlalchemy.orm import  Mapped, mapped_column,relationship
 from sqlalchemy import String, DateTime,Boolean
 from datetime import datetime, timezone
 import uuid
-from models.base import Base
+from .base import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -16,7 +16,7 @@ class User(Base):
     otp_code: Mapped[str] = mapped_column(String(6),nullable=True)
     otp_expiry: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
-    links : Mapped["Link"] = relationship(back_populates="links")
+    links : Mapped[list["Link"]] = relationship("Link",back_populates="user")
     
 
     def __repr__(self):

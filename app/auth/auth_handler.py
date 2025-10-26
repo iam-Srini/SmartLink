@@ -4,26 +4,27 @@ from datetime import datetime, timedelta, timezone
 from app.core.config import settings
 from fastapi import HTTPException, status
 
-def create_access_token(data: dict) -> str:
+def create_access_token(data: dict) -> dict:
     encode_data = data.copy()
     expires = datetime.now(timezone.utc)+timedelta(minutes=settings.access_token_expiration_minutes)
     encode_data.update({"exp":expires, "scope":"access_token"})
     encoded_jwt = jwt.encode(payload=encode_data,algorithm=settings.algorithm,key=settings.secret_key)
-    return encoded_jwt
+    print(f"Encoded data {encoded_jwt}")
+    return {"encoded_token": encoded_jwt, "token_type": "bearer"}
 
-def verify_access_token(token: str):
+def verify_access_token(token: dict):
     try:
-        payload = jwt.decode(token,key=settings.secret_key,algorithms=settings.algorithm)
-        user_email = payload.get("sub")
+        payload = jwt.decode(token["encoded_token"],key=settings.secret_key,algorithms=settings.algorithm)
+        user_id = payload.get("sub")
         scope = payload.get("scope")
 
         if scope != "access_token":
             raise InvalidTokenError("Invalid Token: Incorrect Scope")
         
-        if not user_email:
+        if not user_id:
             raise InvalidTokenError("Invalid Token: Missing Subject")
         
-        return user_email
+        return user_id
     
     except ExpiredSignatureError:
         raise HTTPException(

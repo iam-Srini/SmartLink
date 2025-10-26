@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
-from app.auth.otp_utils import generate_otp
 from app.schemas.user import UserRead, UserCreate
 from app.db.session import get_db
 from sqlalchemy.orm import session
 from app.repository.users import UserRepository
+from app.schemas.token import TokenData
+from fastapi.security import OAuth2PasswordRequestForm
 
 
 user_router = APIRouter(prefix="/users")
@@ -28,9 +29,10 @@ def verify_user(email: str, otp: str, Session: session = Depends(get_db)):
     path = "/login",
     description="login page"
     )   
-def user_login(email: str, password: str, Session = Depends(get_db)):
+def user_login(request: OAuth2PasswordRequestForm = Depends(), Session = Depends(get_db)):
+    print(f"inside router")
     user_repo = UserRepository(db = Session)
-    return user_repo.login_user_repo(email=email,password=password)
+    return user_repo.login_user_repo(email=request.username,password=request.password)
 
 
 

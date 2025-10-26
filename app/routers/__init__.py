@@ -1,5 +1,5 @@
-from routers.link import link_router
-from routers.users import user_router
+from .link import link_router
+from .users import user_router
 from fastapi import APIRouter
 
 router = APIRouter()
