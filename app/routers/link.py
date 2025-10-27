@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 from app.schemas.link import LinkRead
 from app.repository.link import LinkRepository
 from app.db.session import get_db
@@ -22,11 +22,12 @@ def create_link(
 
 @link_router.get("/{short_url}")
 def redirect_link(
+    request: Request,
     short_url : str,
     session : Session = Depends(get_db)
 ):
     link_repo = LinkRepository(db = session)
-    original_url = link_repo.redirect_link(short_url=short_url)
+    original_url = link_repo.redirect_link(short_url=short_url, request=request)
     return RedirectResponse(url=original_url, status_code= status.HTTP_307_TEMPORARY_REDIRECT)
 
 @link_router.get("/get/all", response_model= list[LinkRead])
@@ -37,3 +38,12 @@ def get_user_links(
     link_repo = LinkRepository(db=session)
     return link_repo.get_all_urls(user_data=user_data)
     
+@link_router.get("/{short_url}/stats")
+def get_url_stats(
+    short_url:str,
+    session: Session = Depends(get_db),
+    user_data: User = Depends(get_current_user)
+):
+    link_repo = LinkRepository(db = session)
+    return link_repo.get_link_stats(user_data=user_data, short_url= short_url)
+
