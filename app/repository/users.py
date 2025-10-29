@@ -22,7 +22,6 @@ class UserRepository:
         self.db.add(new_user)
         self.db.commit()
         self.db.refresh(new_user)
-        print(f"otp for registered user is {new_user.otp_code}")
         return new_user
     
     def verify_user_repo(self, email: str, otp: str):

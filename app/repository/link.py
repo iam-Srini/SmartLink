@@ -40,6 +40,9 @@ class LinkRepository:
             user_agent = request.headers.get("user_agent"),
             ip_address = request.client.host
         )
+        self.db.add(log)
+        self.db.commit()
+        self.db.refresh(log)
         return link.original_url
     
     def get_all_urls(self, user_data: User):
@@ -70,7 +73,7 @@ class LinkRepository:
                 {
                     "timestamp": log.timestamp,
                     "user_agent": log.user_agent,
-                    "refferr": log.refferr,
+                    "referrer": log.referrer,
                     "ip": log.ip_address
 
                 }
