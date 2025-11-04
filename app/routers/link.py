@@ -8,7 +8,7 @@ from fastapi.responses import RedirectResponse
 from app.auth.auth_bearer import get_current_user
 from app.models.user import User
 
-link_router = APIRouter(prefix="/link", tags=["Links"])
+link_router = APIRouter(prefix="/links", tags=["Links"])
 
 @link_router.post("/", response_model=LinkRead)
 def create_link(

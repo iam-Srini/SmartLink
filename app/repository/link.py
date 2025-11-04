@@ -43,6 +43,7 @@ class LinkRepository:
         self.db.add(log)
         self.db.commit()
         self.db.refresh(log)
+        print(link.original_url)
         return link.original_url
     
     def get_all_urls(self, user_data: User):

@@ -14,7 +14,7 @@ conf = ConnectionConfig(
     VALIDATE_CERTS=settings.validate_certs
 )
 
-async def send_otp_email(background_tasks: BackgroundTasks, recipient: str, otp_code: str):
+def send_otp_email(background_tasks: BackgroundTasks, recipient: str, otp_code: str):
     """Send OTP email asynchronously."""
     subject = "Your Verification Code"
     body = f"Hello!\n\nYour OTP code is: {otp_code}\n\nThis code expires soon, so use it promptly."

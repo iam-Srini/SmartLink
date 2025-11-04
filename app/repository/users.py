@@ -81,6 +81,25 @@ class UserRepository:
                 detail= "User not found"
             )
         return user
+    
+    def request_otp(self, user_email: str):
+        user = self.db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(
+                status_code= status.HTTP_404_NOT_FOUND,
+                detail= "No User found with the provided email"
+            )
+        if user.is_verified:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= "User is already verified"
+            )
+        user.otp_code = generate_otp()
+        user.otp_expiry = otp_expiry_time()
+        self.db.add(user)
+        self.db.commit()
+        self.db.refresh(user)
+        return user
 
 
         
