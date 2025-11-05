@@ -1,9 +1,11 @@
+"""Link router module providing URL shortening and redirect endpoints."""
+
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.schemas.link import LinkCreate, LinkRead
-from app.repository.link import LinkRepository
+from app.repository import LinkRepository
 from app.db.session import get_db
 from app.auth.auth_bearer import get_current_user
 from app.models.user import User

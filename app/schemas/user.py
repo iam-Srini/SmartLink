@@ -1,3 +1,5 @@
+"""Pydantic models for user creation, login, and profile responses."""
+
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
 
@@ -13,7 +15,7 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=20, description="The password of the user")
 
     @field_validator("password")
-    def validate_password(cls, value: str) -> str:
+    def validate_password(cls, value: str) -> str:    # pylint: disable=no-self-argument
         """Ensure password meets complexity requirements."""
         if not any(char.isdigit() for char in value):
             raise ValueError("Password must contain at least one digit.")

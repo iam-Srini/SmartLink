@@ -1,3 +1,5 @@
+"""SQLAlchemy User model."""
+
 import uuid
 from datetime import datetime, timezone
 

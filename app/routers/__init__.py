@@ -1,3 +1,8 @@
+"""
+API routers for SmartLink.
+This file combines all route modules into a single FastAPI router instance.
+"""
+
 from fastapi import APIRouter
 from .link import link_router
 from .users import user_router
@@ -8,3 +13,5 @@ router = APIRouter()
 # Include feature-specific routers
 router.include_router(user_router)
 router.include_router(link_router)
+
+__all__ = ["router"]

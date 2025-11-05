@@ -3,9 +3,9 @@ from fastapi import HTTPException, status, Request
 
 from app.schemas.link import LinkCreate
 from app.core.utils import generate_short_code_from_uuid
-from app.models.link import Link
-from app.models.user import User
-from app.models.click_log import ClickLog
+from app.models import Link
+from app.models import User
+from app.models import ClickLog
 
 
 class LinkRepository:

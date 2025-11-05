@@ -1,0 +1,59 @@
+[MASTER]
+# Allow loading of external plugins (useful for FastAPI/SQLAlchemy projects)
+extension-pkg-whitelist=pydantic,sqlalchemy
+ignore=__pycache__,migrations,venv
+persistent=yes
+jobs=1
+
+[MESSAGES CONTROL]
+# Disable rules that don’t make sense for FastAPI/SQLAlchemy
+disable=
+    C0114,  # missing-module-docstring (optional)
+    C0115,  # missing-class-docstring
+    C0116,  # missing-function-docstring
+    R0903,  # too-few-public-methods (models, schemas)
+    R0801,  # duplicate-code (common in model fields)
+    W0703,  # broad-except (allowed in error handling)
+    C0103,  # variable name style (FastAPI request vars)
+    E0213,  # method should have "self" as first argument (class validators)
+    C0303,  # trailing-whitespace
+    C0304,  # missing-final-newline
+
+[FORMAT]
+# Formatting rules
+max-line-length=120
+indent-string='    '
+expected-line-ending-format=LF
+
+[DESIGN]
+# Keep these moderate to allow reasonable complexity
+max-args=10
+max-attributes=12
+max-locals=25
+max-returns=8
+max-branches=15
+max-statements=50
+max-public-methods=30
+
+[BASIC]
+# Naming conventions
+variable-rgx=[a-z_][a-z0-9_]{1,30}$
+const-rgx=([A-Z_][A-Z0-9_]*)|(__.*__)$
+attr-rgx=[a-z_][a-z0-9_]{1,30}$
+argument-rgx=[a-z_][a-z0-9_]{1,30}$
+class-attribute-rgx=[a-z_][a-z0-9_]{1,30}$
+class-rgx=[A-Z_][a-zA-Z0-9]+$
+function-rgx=[a-z_][a-z0-9_]{1,30}$
+
+[REPORTS]
+output-format=colorized
+score=yes
+reports=no
+
+[TYPECHECK]
+ignored-modules=alembic,sqlalchemy,pydantic,fastapi,jwt
+ignored-classes=Session,BaseModel
+
+[LOGGING]
+# Require lazy interpolation for logs
+logging-format-style=new

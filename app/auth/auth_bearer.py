@@ -24,8 +24,8 @@ def get_current_user(
         user_repo = UserRepository(db)
         return user_repo.get_user_by_id(token_data)
 
-    except Exception:
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invalid or expired token"
-        )
+        ) from exc

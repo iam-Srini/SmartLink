@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.schemas.user import UserRead, UserCreate
 from app.db.session import get_db
-from app.repository.users import UserRepository
+from app.repository import UserRepository
 from app.auth.email_utils import send_otp_email
 
 # Router setup
