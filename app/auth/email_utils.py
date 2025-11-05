@@ -1,6 +1,8 @@
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from fastapi import BackgroundTasks
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+
 from app.core.config import settings
+
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.mail_username,
@@ -11,19 +13,30 @@ conf = ConnectionConfig(
     MAIL_STARTTLS=settings.mail_starttls,
     MAIL_SSL_TLS=settings.mail_ssl_tls,
     USE_CREDENTIALS=settings.use_credentials,
-    VALIDATE_CERTS=settings.validate_certs
+    VALIDATE_CERTS=settings.validate_certs,
 )
 
-def send_otp_email(background_tasks: BackgroundTasks, recipient: str, otp_code: str):
-    """Send OTP email asynchronously."""
+
+def send_otp_email(
+    background_tasks: BackgroundTasks,
+    recipient: str,
+    otp_code: str,
+) -> None:
+    """
+    Send an OTP email asynchronously using FastMail.
+    """
     subject = "Your Verification Code"
-    body = f"Hello!\n\nYour OTP code is: {otp_code}\n\nThis code expires soon, so use it promptly."
-    
+    body = (
+        "Hello!\n\n"
+        f"Your OTP code is: {otp_code}\n\n"
+        "This code expires soon, so please use it promptly."
+    )
+
     message = MessageSchema(
         subject=subject,
         recipients=[recipient],
         body=body,
-        subtype="plain"
+        subtype="plain",
     )
 
     fm = FastMail(conf)

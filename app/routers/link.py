@@ -1,49 +1,59 @@
-from fastapi import APIRouter, Depends, status, Request
-from app.schemas.link import LinkRead
+from fastapi import APIRouter, Depends, Request, status
+from fastapi.responses import RedirectResponse
+from sqlalchemy.orm import Session
+
+from app.schemas.link import LinkCreate, LinkRead
 from app.repository.link import LinkRepository
 from app.db.session import get_db
-from sqlalchemy.orm import Session
-from app.schemas.link import LinkCreate
-from fastapi.responses import RedirectResponse
 from app.auth.auth_bearer import get_current_user
 from app.models.user import User
 
+# Router setup
 link_router = APIRouter(prefix="/links", tags=["Links"])
+
 
 @link_router.post("/", response_model=LinkRead)
 def create_link(
     data: LinkCreate,
     session: Session = Depends(get_db),
-    user_data: User = Depends(get_current_user)
-    
+    user_data: User = Depends(get_current_user),
 ):
-    link_repo = LinkRepository(db = session)
-    return link_repo.create_link(data = data, user_data= user_data)
+    """Create a new shortened link for the current user."""
+    link_repo = LinkRepository(db=session)
+    return link_repo.create_link(data=data, user_data=user_data)
+
 
 @link_router.get("/{short_url}")
 def redirect_link(
     request: Request,
-    short_url : str,
-    session : Session = Depends(get_db)
+    short_url: str,
+    session: Session = Depends(get_db),
 ):
-    link_repo = LinkRepository(db = session)
+    """Redirect to the original URL using the provided short code."""
+    link_repo = LinkRepository(db=session)
     original_url = link_repo.redirect_link(short_url=short_url, request=request)
-    return RedirectResponse(url=original_url, status_code= status.HTTP_307_TEMPORARY_REDIRECT)
+    return RedirectResponse(
+        url=original_url,
+        status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+    )
 
-@link_router.get("/get/all", response_model= list[LinkRead])
+
+@link_router.get("/get/all", response_model=list[LinkRead])
 def get_user_links(
-    session : Session = Depends(get_db),
-    user_data: User = Depends(get_current_user)
+    session: Session = Depends(get_db),
+    user_data: User = Depends(get_current_user),
 ):
+    """Fetch all shortened links created by the current user."""
     link_repo = LinkRepository(db=session)
     return link_repo.get_all_urls(user_data=user_data)
-    
+
+
 @link_router.get("/{short_url}/stats")
 def get_url_stats(
-    short_url:str,
+    short_url: str,
     session: Session = Depends(get_db),
-    user_data: User = Depends(get_current_user)
+    user_data: User = Depends(get_current_user),
 ):
-    link_repo = LinkRepository(db = session)
-    return link_repo.get_link_stats(user_data=user_data, short_url= short_url)
-
+    """Retrieve click statistics for a specific shortened URL."""
+    link_repo = LinkRepository(db=session)
+    return link_repo.get_link_stats(user_data=user_data, short_url=short_url)

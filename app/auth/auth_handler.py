@@ -1,43 +1,60 @@
 import jwt
-from jwt.exceptions import PyJWTError, InvalidTokenError, ExpiredSignatureError
 from datetime import datetime, timedelta, timezone
-from app.core.config import settings
+from jwt.exceptions import PyJWTError, InvalidTokenError, ExpiredSignatureError
 from fastapi import HTTPException, status
 
-def create_access_token(data: dict) -> dict:
+from app.core.config import settings
+
+
+def create_access_token(data: dict) -> str:
+    """
+    Create a JWT access token with an expiration time and scope.
+    """
     encode_data = data.copy()
-    expires = datetime.now(timezone.utc)+timedelta(minutes=settings.access_token_expiration_minutes)
-    encode_data.update({"exp":expires, "scope":"access_token"})
-    encoded_jwt = jwt.encode(payload=encode_data,algorithm=settings.algorithm,key=settings.secret_key)
-    print(f"Encoded data {encoded_jwt}")
+    expires = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.access_token_expiration_minutes
+    )
+    encode_data.update({"exp": expires, "scope": "access_token"})
+    encoded_jwt = jwt.encode(
+        payload=encode_data,
+        algorithm=settings.algorithm,
+        key=settings.secret_key,
+    )
+    print(f"Encoded data: {encoded_jwt}")
     return encoded_jwt
 
-def verify_access_token(token: str):
+
+def verify_access_token(token: str) -> str:
+    """
+    Verify a JWT access token and return the user ID if valid.
+    """
     try:
-        payload = jwt.decode(token,key=settings.secret_key,algorithms=settings.algorithm)
+        payload = jwt.decode(
+            token,
+            key=settings.secret_key,
+            algorithms=settings.algorithm,
+        )
         user_id = payload.get("sub")
         scope = payload.get("scope")
 
         if scope != "access_token":
-            raise InvalidTokenError("Invalid Token: Incorrect Scope")
-        
+            raise InvalidTokenError("Invalid token: incorrect scope")
+
         if not user_id:
-            raise InvalidTokenError("Invalid Token: Missing Subject")
-        
+            raise InvalidTokenError("Invalid token: missing subject")
+
         return user_id
-    
+
     except ExpiredSignatureError:
         raise HTTPException(
-            status_code= status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Access token has expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     except PyJWTError:
         raise HTTPException(
-            status_code= status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Access token",
-            headers={"WWW-Authenticate":"Bearer"},
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid access token",
+            headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    

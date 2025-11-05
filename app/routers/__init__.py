@@ -1,7 +1,10 @@
+from fastapi import APIRouter
 from .link import link_router
 from .users import user_router
-from fastapi import APIRouter
 
+# Initialize main API router
 router = APIRouter()
-router.include_router(link_router)
+
+# Include feature-specific routers
 router.include_router(user_router)
+router.include_router(link_router)

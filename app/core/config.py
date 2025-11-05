@@ -1,14 +1,19 @@
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
 
+
 class Settings(BaseSettings):
-    # Existing fields
+    """
+    Application configuration settings loaded from environment variables.
+    """
+
+    # Database and authentication
     database_url: str
     secret_key: str
     algorithm: str
     access_token_expiration_minutes: int
 
-    # New mail settings
+    # Mail configuration
     mail_username: str
     mail_password: str
     mail_from: str
@@ -20,5 +25,6 @@ class Settings(BaseSettings):
     validate_certs: bool = True
 
     model_config = ConfigDict(env_file=".env")
+
 
 settings = Settings()
