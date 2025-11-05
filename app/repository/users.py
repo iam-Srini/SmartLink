@@ -55,7 +55,7 @@ class UserRepository:
                 detail="Invalid OTP code.",
             )
 
-        if user.otp_expiry.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+        if user.otp_expiry.astimezone(timezone.utc) < datetime.now(timezone.utc):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="OTP expired.",

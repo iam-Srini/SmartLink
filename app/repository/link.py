@@ -51,8 +51,8 @@ class LinkRepository:
 
         log = ClickLog(
             link_id=link.id,
-            referrer=request.headers.get("referrer"),
-            user_agent=request.headers.get("user_agent"),
+            referrer=request.headers.get("referer") or "direct",
+            user_agent=request.headers.get("user-agent") or "unknown",
             ip_address=request.client.host,
         )
         self.db.add(log)
