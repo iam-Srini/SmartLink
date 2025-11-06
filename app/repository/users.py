@@ -23,6 +23,10 @@ class UserRepository:
         """
         Register a new user and generate OTP for email verification.
         """
+        existing_user = self.db.query(User).filter(User.email == user_create.email.lower()).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
         new_user = User(
             username=user_create.username.strip(),
             email=user_create.email.lower(),

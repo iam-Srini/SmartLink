@@ -1,20 +1,7 @@
 from fastapi import BackgroundTasks
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from app.core.config import settings
-
-
-conf = ConnectionConfig(
-    MAIL_USERNAME=settings.mail_username,
-    MAIL_PASSWORD=settings.mail_password,
-    MAIL_FROM=settings.mail_from,
-    MAIL_PORT=settings.mail_port,
-    MAIL_SERVER=settings.mail_server,
-    MAIL_STARTTLS=settings.mail_starttls,
-    MAIL_SSL_TLS=settings.mail_ssl_tls,
-    USE_CREDENTIALS=settings.use_credentials,
-    VALIDATE_CERTS=settings.validate_certs,
-)
 
 
 def send_otp_email(
@@ -23,21 +10,26 @@ def send_otp_email(
     otp_code: str,
 ) -> None:
     """
-    Send an OTP email asynchronously using FastMail.
+    Send an OTP email asynchronously using SendGrid.
     """
     subject = "Your Verification Code"
-    body = (
-        "Hello!\n\n"
-        f"Your OTP code is: {otp_code}\n\n"
-        "This code expires soon, so please use it promptly."
-    )
+    body = f"Hello!\n\nYour OTP code is: {otp_code}\n\nThis code expires soon, so please use it promptly."
 
-    message = MessageSchema(
+    message = Mail(
+        from_email=settings.mail_from,
+        to_emails=recipient,
         subject=subject,
-        recipients=[recipient],
-        body=body,
-        subtype="plain",
+        html_content=f"<p>{body}</p>"
     )
 
-    fm = FastMail(conf)
-    background_tasks.add_task(fm.send_message, message)
+    def _send():
+        try:
+            sg = SendGridAPIClient(settings.mail_password)
+            response = sg.send(message)
+            print("Status Code:", response.status_code)
+        except Exception as e:
+            print("Error sending email:", str(e))
+
+    # Run SendGrid email sending in the background
+    background_tasks.add_task(_send)
+    
